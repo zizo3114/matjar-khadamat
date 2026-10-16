@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /u/
+Disallow: /dashboard/
+Disallow: /dashboard/profile
+Disallow: /dashboard/portfolio
+Disallow: /dashboard/products
+Disallow: /dashboard/analytics
+Disallow: /dashboard/withdraw
+Disallow: /payment/
+Disallow: /download
+
+Sitemap: https://supportlocal.dz/sitemap.xml

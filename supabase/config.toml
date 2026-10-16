@@ -1,0 +1,7 @@
+[functions.chargily-checkout]
+verify_jwt = false
+entrypoint = "./functions/chargily-checkout/index.ts"
+
+[functions.chargily-webhook]
+verify_jwt = false
+entrypoint = "./functions/chargily-webhook/index.ts"
