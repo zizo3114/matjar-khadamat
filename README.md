@@ -1,41 +1,105 @@
-# SupportLocal — منصة دعم المبدعين الجزائريين
+# Ekhdemli — منصة الخدمات والمنتجات الرقمية
 
-منصة متكاملة تتيح للمبدعين الجزائريين إنشاء صفحاتهم الخاصة، استقبال الدعم المالي (Tips)، وبيع المنتجات الرقمية. تستخدم الدفع المحلي عبر Chargily Pay (Edahabia & CIB).
+منصة جزائرية متكاملة للسوق متعدد البائعين (Multi-vendor Marketplace) تتيح للبائعين نشر خدماتهم ومنتجاتهم الرقمية، وللمشترين تصفحها وطلبها بأمان عبر نظام الضمان (Escrow) والدفع المحلي عبر Chargily Pay (Edahabia & CIB).
+
+---
 
 ## المحتويات
 
 - [نظرة عامة](#نظرة-عامة)
+- [الميزات الرئيسية](#الميزات-الرئيسية)
 - [التقنيات المستخدمة](#التقنيات-المستخدمة)
 - [هيكل المشروع](#هيكل-المشروع)
 - [المتطلبات](#المتطلبات)
-- [التشغيل المحلي](#التشغيل-المحلي)
+- [التشغيل على حاسوبك (Windows)](#التشغيل-على-حاسوبك-windows)
+- [التشغيل على خادم (Server) وربطه بدومين](#التشغيل-على-خادم-server-وربطه-بدومين)
 - [متغيرات البيئة](#متغيرات-البيئة)
 - [قاعدة البيانات](#قاعدة-البيانات)
 - [الدفع عبر Chargily](#الدفع-عبر-chargily)
+- [نظام الضمان (Escrow)](#نظام-الضمان-escrow)
+- [نظام التقييمات والمراجعات](#نظام-التقييمات-والمراجعات)
 - [الأمان](#الأمان)
-- [النشر والإنتاج](#النشر-والإنتاج)
-- [SEO والأداء](#seo-والأداء)
 - [استكشاف الأخطاء](#استكشاف-الأخطاء)
 
 ---
 
 ## نظرة عامة
 
-SupportLocal هي منصة تجمع المبدعين والداعمين في مكان واحد:
+Ekhdemli هي منصة تجمع البائعين والمشترين في سوق رقمي واحد:
 
-**للمبدعين (Creators):**
-- إنشاء صفحة عامة برابط مخصص (`/u/username`)
-- استقبال الدعم المالي المباشر (Tips)
-- بيع المنتجات الرقمية (PDF, ZIP, صور, فيديو, صوت)
-- عرض أعمالهم في معرض (Portfolio)
-- لوحة تحكم بالإحصائيات والأرباح
-- طلب سحب الأرباح إلى حساب CCP/RIP
+**للبائعين (Sellers):**
+- إنشاء حساب وبدء البيع مجاناً
+- نشر خدمات رقمية في 7 تصنيفات معتمدة
+- نشر منتجات رقمية في 6 تصنيفات معتمدة
+- تحديد الأسعار، مدة التسليم، والمخزون
+- لوحة تحكم لإدارة الإعلانات والطلبات
+- استلام الأرباح بعد تأكيد التسليم عبر الضمان
+- نظام اشتراكات (مجاني، أساسي، احترافي)
 
-**للداعمين (Supporters):**
-- تصفح صفحات المبدعين
-- إرسال الدعم المالي
-- شراء المنتجات الرقمية
-- تحميل المنتجات بعد الدفع
+**للمشترين (Buyers):**
+- تصفح الخدمات والمنتجات حسب التصنيف والسعر والتقييم
+- طلب الخدمات أو شراء المنتجات بأمان
+- الدفع عبر Chargily (Edahabia & CIB)
+- نظام ضمان: أموالك محجوزة حتى يتم تسليم العمل
+- مراجعة وتقييم البائعين بعد إتمام الطلب
+- تبادل الرسائل مع البائعين
+
+**للإدارة (Admin):**
+- لوحة تحكم كاملة لإدارة المنصة
+- مراجعة الطلبات في الضمان وتأكيدها أو رفضها
+- إدارة الأعضاء والصلاحيات
+- الاطلاع على جميع المحادثات
+- متابعة كل الطلبات وحالاتها
+
+---
+
+## الميزات الرئيسية
+
+### سوق الخدمات (`/services`)
+
+7 تصنيفات معتمدة للخدمات الرقمية:
+
+| التصنيف | أمثلة |
+|---------|-------|
+| تصميم | شعار، هوية بصرية، UI/UX، سوشيال ميديا، مطبوعات |
+| تعليق صوتي و Audio | تعليق عربي/فرنسي، تحرير بودكاست، موسيقى |
+| تصميم وتطوير المواقع | تصميم موقع، تطوير واجهات، متاجر إلكترونية |
+| مونتاج فيديو | مونتاج، موشن جرافيك، ريلز، إعلانات |
+| كتابة وترجمة | كتابة إعلانية، محتوى، ترجمة، تدقيق |
+| إدارة سوشيال ميديا | إدارة حسابات، تصميم منشورات، استراتيجية |
+| SEO وتسويق | تحسين محركات البحث، تسويق رقمي، حملات |
+
+### سوق المنتجات (`/products`)
+
+6 تصنيفات معتمدة للمنتجات الرقمية:
+
+| التصنيف | أمثلة |
+|---------|-------|
+| اشتراكات | Netflix، Spotify، YouTube Premium |
+| قوالب مواقع جاهزة | HTML/CSS، WordPress، React، Shopify |
+| ألعاب ومفاتيح | مفاتيح Steam، Epic Games، بطاقات هدايا |
+| حسابات رقمية | حسابات أدوات، منصات، تواصل |
+| برامج وتراخيص | مفاتيح تفعيل، تراخيص، أدوات احترافية |
+| كتب ودورات | كتب إلكترونية، دورات فيديو، أدلة PDF |
+
+### بطاقات العرض
+
+كل بطاقة خدمة أو منتج تعرض:
+- اسم البائع + صورته
+- عنوان الخدمة/المنتج + وصف مختصر
+- السعر (يبدأ من)
+- شارة التصنيف
+- تقييم نجوم + عدد المراجعات
+- مؤشر التوفر (للمنتجات)
+- زر "عرض التفاصيل" أو "شراء الآن"
+
+### تصفية وبحث
+
+- بحث نصي في العنوان والوصف
+- تصفية حسب التصنيف والتصنيف الفرعي
+- تصفية حسب نطاق السعر
+- تصفية حسب الحد الأدنى للتقييم (3+، 4+، 4.5+)
+- حالة فارغة عند عدم وجود نتائج
 
 ---
 
@@ -47,7 +111,7 @@ SupportLocal هي منصة تجمع المبدعين والداعمين في م�
 | **Vite 7** | أداة البناء والتطوير |
 | **TypeScript** | لغة البرمجة |
 | **Tailwind CSS v4** | التصميم |
-| **shadcn/ui** | مكتبة المكونات |
+| **shadcn/ui (Radix UI)** | مكتبة المكونات |
 | **Supabase** | قاعدة البيانات + المصادقة + التخزين + Edge Functions |
 | **Chargily Pay** | بوابة الدفع (Edahabia & CIB) |
 | **React Router v7** | التنقل بين الصفحات |
@@ -61,97 +125,327 @@ SupportLocal هي منصة تجمع المبدعين والداعمين في م�
 ```
 project/
 ├── src/
-│   ├── App.tsx                    # التطبيق الرئيسي + المسارات
-│   ├── main.tsx                   # نقطة الدخول
-│   ├── index.css                  # ألوان وتصميم Tailwind
+│   ├── App.tsx                        # التطبيق الرئيسي + المسارات
+│   ├── main.tsx                       # نقطة الدخول
+│   ├── index.css                      # ألوان وتصميم Tailwind
 │   ├── components/
-│   │   ├── ui/                    # مكونات shadcn/ui
-│   │   ├── mode-toggle.tsx        # زر تبديل الوضع الليلي/النهاري
-│   │   ├── route-guards.tsx       # حماية المسارات
-│   │   └── theme-provider.tsx     # مزود السمة
+│   │   ├── ui/                        # مكونات shadcn/ui
+│   │   ├── marketplace-layout.tsx     # شريط التنقل + التذييل
+│   │   ├── listing-card.tsx           # بطاقة خدمة/منتج
+│   │   ├── category-icon.tsx          # أيقونات التصنيفات
+│   │   ├── rating-stars.tsx           # نجوم التقييم
+│   │   ├── admin-route.tsx            # حماية مسار الإدارة
+│   │   ├── route-guards.tsx           # حماية المسارات
+│   │   ├── mode-toggle.tsx            # زر الوضع الليلي/النهاري
+│   │   └── theme-provider.tsx         # مزود السمة
 │   ├── contexts/
-│   │   └── auth-context.tsx       # سياق المصادقة
+│   │   └── auth-context.tsx           # سياق المصادقة
 │   ├── lib/
-│   │   ├── supabase.ts            # عميل Supabase + دوال مساعدة
-│   │   ├── utils.ts               # دوال مساعدة عامة
-│   │   ├── use-seo-meta.ts        # تحديث وسوم SEO ديناميكياً
-│   │   └── sitemap.ts             # مولد الخريطة الموقعية
+│   │   ├── supabase.ts                # عميل Supabase + دوال مساعدة
+│   │   ├── marketplace.ts             # التصنيفات + دوال جلب الإعلانات
+│   │   ├── utils.ts                   # دوال مساعدة عامة
+│   │   ├── use-seo-meta.ts            # تحديث وسوم SEO
+│   │   └── sitemap.ts                 # مولد الخريطة الموقعية
 │   └── pages/
-│       ├── login.tsx              # تسجيل الدخول
-│       ├── register.tsx           # إنشاء حساب
-│       ├── dashboard.tsx          # لوحة التحكم
-│       ├── edit-profile.tsx       # تعديل الملف الشخصي
-│       ├── portfolio.tsx          # إدارة معرض الأعمال
-│       ├── products.tsx           # إدارة المنتجات الرقمية
-│       ├── analytics.tsx          # الإحصائيات والأرباح
-│       ├── withdraw.tsx           # طلبات السحب
-│       ├── link-in-bio.tsx        # الصفحة العامة للمبدع
-│       ├── payment-success.tsx    # صفحة نجاح الدفع
-│       ├── payment-failed.tsx     # صفحة فشل الدفع
-│       └── download.tsx           # تحميل المنتج بعد الدفع
+│       ├── home.tsx                   # الصفحة الرئيسية
+│       ├── browse-services.tsx        # تصفح الخدمات
+│       ├── browse-products.tsx        # تصفح المنتجات
+│       ├── service-detail.tsx         # تفاصيل الخدمة
+│       ├── product-detail.tsx         # تفاصيل المنتج
+│       ├── seller-profile.tsx         # الملف العام للبائع
+│       ├── login.tsx                  # تسجيل الدخول
+│       ├── register.tsx               # إنشاء حساب
+│       ├── seller-dashboard.tsx       # لوحة تحكم البائع
+│       ├── publish-service.tsx        # نشر خدمة جديدة
+│       ├── publish-product.tsx        # نشر منتج جديد
+│       ├── my-orders.tsx              # طلباتي
+│       ├── messages.tsx               # الرسائل
+│       ├── admin.tsx                  # لوحة الإدارة
+│       ├── pricing.tsx                # صفحة الاشتراكات
+│       ├── edit-profile.tsx           # تعديل الملف الشخصي
+│       ├── payment-success.tsx        # نجاح الدفع
+│       └── payment-failed.tsx         # فشل الدفع
 ├── supabase/
-│   ├── config.toml                # إعدادات Edge Functions
-│   ├── migrations/                # هجرات قاعدة البيانات
+│   ├── config.toml                    # إعدادات Edge Functions
+│   ├── migrations/                    # هجرات قاعدة البيانات
 │   └── functions/
-│       ├── chargily-checkout/     # إنشاء جلسة دفع
-│       └── chargily-webhook/      # استقبال إشعارات الدفع
+│       ├── chargily-checkout/         # إنشاء جلسة دفع
+│       └── chargily-webhook/          # استقبال إشعارات الدفع
 ├── public/
-│   └── robots.txt                 # توجيه محركات البحث
-├── index.html                     # وسوم SEO و Open Graph
-├── vite.config.ts                 # إعدادات البناء + تقسيم الكود
+│   ├── hero-bg.webp                   # صورة الخلفية
+│   └── robots.txt                     # توجيه محركات البحث
+├── index.html                         # وسوم SEO و Open Graph
+├── vite.config.ts                     # إعدادات البناء + تقسيم الكود
 └── package.json
 ```
+
+### مسارات التطبيق
+
+| المسار | الصفحة | الصلاحية |
+|--------|--------|----------|
+| `/` | الصفحة الرئيسية | عام |
+| `/services` | تصفح الخدمات | عام |
+| `/products` | تصفح المنتجات | عام |
+| `/services/:id` | تفاصيل الخدمة | عام |
+| `/products/:id` | تفاصيل المنتج | عام |
+| `/seller/:id` | الملف العام للبائع | عام |
+| `/pricing` | الاشتراكات | عام |
+| `/login` | تسجيل الدخول | زوار فقط |
+| `/register` | إنشاء حساب | زوار فقط |
+| `/dashboard` | لوحة البائع | مسجلون |
+| `/dashboard/profile` | تعديل الملف | مسجلون |
+| `/publish-service` | نشر خدمة | مسجلون |
+| `/publish-product` | نشر منتج | مسجلون |
+| `/my-orders` | طلباتي | مسجلون |
+| `/messages` | الرسائل | مسجلون |
+| `/admin` | لوحة الإدارة | الإدارة فقط |
 
 ---
 
 ## المتطلبات
 
-- **Node.js** 18+ (يُفضّل 20+)
-- **npm** 10+
-- حساب **Supabase** (مُجهز مسبقاً في هذا المشروع)
-- حساب **Chargily Pay** للحصول على مفتاح API سري
+- **Node.js** إصدار 18 أو أحدث (يُفضّل 20+) — [تحميل](https://nodejs.org)
+- **npm** (يأتي مع Node.js)
+- حساب **Supabase** — [supabase.com](https://supabase.com)
+- حساب **Chargily Pay** — [epay.chargily.com](https://epay.chargily.com)
 
 ---
 
-## التشغيل المحلي
+## التشغيل على حاسوبك (Windows)
 
-### 1. تثبيت الحزم
+### الخطوة 1: تثبيت Node.js
 
-```bash
+1. اذهب إلى [nodejs.org](https://nodejs.org)
+2. حمّل نسخة LTS (الأكثر استقراراً)
+3. شغّل المُثبّت واتبع الخطوات (Next → Next → Install)
+4. للتأكد من التثبيت، افتح **Command Prompt** أو **PowerShell** واكتب:
+   ```
+   node --version
+   npm --version
+   ```
+   يجب أن ترى أرقام إصدارات.
+
+### الخطوة 2: تحميل المشروع
+
+إذا كان المشروع في ملف مضغوط (ZIP):
+1. افك الضغط في مجلد، مثلاً: `C:\ekhdemli`
+2. افتح **Command Prompt** في هذا المجلد (اكتب `cmd` في شريط العنوان في مستكشف Windows واضغط Enter)
+
+أو إذا كان على GitHub:
+```
+git clone https://github.com/your-username/ekhdemli.git
+cd ekhdemli
+```
+
+### الخطوة 3: تثبيت الحزم
+
+في موجه الأوامر، اكتب:
+```
 npm install
 ```
 
-### 2. متغيرات البيئة
+هذا سيُحمّل كل المكتبات المطلوبة. قد يستغرق دقيقتين تقريباً.
 
-ملف `.env` موجود ومُعبأ مسبقاً ببيانات Supabase. تحتاج فقط لإضافة مفتاح Chargily السري كـ Edge Function Secret (انظر قسم [الدفع عبر Chargily](#الدفع-عبر-chargily)).
+### الخطوة 4: إعداد ملف البيئة
 
-### 3. تشغيل بيئة التطوير
+ملف `.env` موجود ومُعبأ مسبقاً ببيانات Supabase. إذا أردت ربط مشروع Supabase خاص بك، استبدل القيم:
 
-```bash
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+تجد هذه القيم في لوحة تحكم Supabase: **Project Settings → API**.
+
+### الخطوة 5: تشغيل الموقع محلياً
+
+```
 npm run dev
 ```
 
-الموقع سيعمل على `http://localhost:5173`
+الموقع سيعمل على `http://localhost:5173`. افتح هذا الرابط في متصفحك.
 
-### 4. بناء المشروع للإنتاج
+> الموقع سيُعاد تحميله تلقائياً عند كل تعديل في الكود.
 
-```bash
+### الخطوة 6: بناء المشروع للإنتاج (اختياري)
+
+```
 npm run build
 ```
 
 الملفات الجاهزة للنشر ستكون في مجلد `dist/`.
 
-### 5. معاينة بناء الإنتاج محلياً
-
-```bash
+لمعاينة البناء محلياً:
+```
 npm run preview
 ```
 
-### 6. فحص الأنواع (TypeScript)
+---
 
-```bash
-npm run typecheck
+## التشغيل على خادم (Server) وربطه بدومين
+
+### نظرة عامة
+
+الموقع يتكون من جزأين:
+
+1. **الواجهة الأمامية (Frontend)**: ملفات ثابتة (HTML/CSS/JS) ننتجها عبر `npm run build` — تُرفع على أي خادم ويب.
+
+2. **الخلفية (Backend)**: قاعدة بيانات Supabase + Edge Functions — تعمل على خوادم Supabase السحابية، لا تحتاج لإعداد خادم خاص.
+
+> **ملاحظة مهمة:** Supabase يعمل في السحابة (Cloud) ولا تحتاج لتثبيته على خادمك. فقط الواجهة الأمامية تحتاج لخادم.
+
+### الطريقة الأولى: النشر على Vercel (الأسهل والمجاني)
+
+#### 1. أنشئ حساب على Vercel
+
+اذهب إلى [vercel.com](https://vercel.com) وسجّل حساباً (يمكنك التسجيل بـ GitHub).
+
+#### 2. ارفع المشروع إلى GitHub
+
 ```
+git init
+git add .
+git commit -m "Ekhdemli marketplace"
+git branch -M main
+git remote add origin https://github.com/your-username/ekhdemli.git
+git push -u origin main
+```
+
+#### 3. اربط Vercel بـ GitHub
+
+1. في لوحة Vercel، اضغط **New Project**
+2. اختر مستودع المشروع من GitHub
+3. أضف متغيرات البيئة:
+   - `VITE_SUPABASE_URL` = رابط Supabase
+   - `VITE_SUPABASE_ANON_KEY` = مفتاح Supabase العام
+4. اضغط **Deploy**
+
+Vercel سيبني المشروع تلقائياً ويعطيك رابطاً مثل `ekhdemli.vercel.app`.
+
+#### 4. اربط دومين خاص
+
+1. في لوحة Vercel → **Settings → Domains**
+2. أضف دومينك، مثلاً `ekhdemli.dz`
+3. في لوحة تحكم دومينك، وجّه DNS:
+   - **Type:** CNAME
+   - **Name:** @ أو www
+   - **Value:** cname.vercel-dns.com
+
+### الطريقة الثانية: النشر على Netlify
+
+```
+npm i -g netlify-cli
+npm run build
+netlify deploy --prod
+```
+
+أضف ملف `public/_redirects` بمحتوى:
+```
+/*    /index.html   200
+```
+
+> هذا الملف ضروري لأن الموقع SPA (صفحة واحدة) — كل المسارات يجب أن توجّه إلى `index.html`.
+
+أضف متغيرات البيئة في لوحة Netlify:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+### الطريقة الثالثة: خادم VPS (Ubuntu/Linux)
+
+هذه الطريقة تمنحك تحكماً كاملاً وتصلح للإنتاج.
+
+#### 1. اشترِ خادم VPS
+
+من أي مزوّد (DigitalOcean، Hetzner، OVH، إلخ). مواصفات مقترحة:
+- 1 GB RAM على الأقل
+- Ubuntu 22.04 أو 24.04
+
+#### 2. اتصل بالخادم
+
+```
+ssh root@your-server-ip
+```
+
+#### 3. تثبيت Node.js و Nginx
+
+```
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs nginx
+```
+
+#### 4. رفع المشروع للخادم
+
+من حاسوبك:
+```
+scp -r dist/ root@your-server-ip:/var/www/ekhdemli/
+```
+
+أو استخدم Git:
+```
+cd /var/www
+git clone https://github.com/your-username/ekhdemli.git
+cd ekhdemli
+npm install
+npm run build
+```
+
+#### 5. إعداد Nginx
+
+أنشئ ملف إعداد:
+```
+nano /etc/nginx/sites-available/ekhdemli
+```
+
+بالمحتوى التالي:
+```nginx
+server {
+    listen 80;
+    server_name ekhdemli.dz www.ekhdemli.dz;
+    root /var/www/ekhdemli/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|woff2|webp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    gzip on;
+    gzip_types text/css application/javascript application/json;
+}
+```
+
+فعّل الموقع:
+```
+ln -s /etc/nginx/sites-available/ekhdemli /etc/nginx/sites-enabled/
+nginx -t
+systemctl restart nginx
+```
+
+#### 6. شهادة SSL (HTTPS)
+
+```
+apt install -y certbot python3-certbot-nginx
+certbot --nginx -d ekhdemli.dz -d www.ekhdemli.dz
+```
+
+Certbot سيثبت الشهادة تلقائياً ويُعد Nginx لإعادة توجيه HTTP إلى HTTPS.
+
+#### 7. وجّه الدومين إلى الخادم
+
+في لوحة تحكم الدومين، أضف سجل DNS:
+- **Type:** A
+- **Name:** @
+- **Value:** عنوان IP الخاص بخادمك
+
+انتظر انتشار DNS (قد يستغرق من دقائق إلى ساعات).
+
+#### 8. تأكد أن كل شيء يعمل
+
+افتح `https://ekhdemli.dz` في متصفحك — يجب أن يعمل الموقع.
 
 ---
 
@@ -159,32 +453,29 @@ npm run typecheck
 
 ### ملف `.env` (الواجهة الأمامية)
 
-| المتغير | الوصف |
-|---------|-------|
-| `VITE_SUPABASE_URL` | رابط مشروع Supabase |
-| `VITE_SUPABASE_ANON_KEY` | مفتاح Supabase العام (Anon Key) |
+| المتغير | الوصف | مكان الإيجاد |
+|---------|-------|-------------|
+| `VITE_SUPABASE_URL` | رابط مشروع Supabase | Supabase Dashboard → Project Settings → API |
+| `VITE_SUPABASE_ANON_KEY` | مفتاح Supabase العام | Supabase Dashboard → Project Settings → API |
 
-> **ملاحظة:** المفتاح العام (Anon Key) آمن للاستخدام في الواجهة الأمامية. المفتاح السري (Service Role Key) يُستخدم فقط في Edge Functions ولا يظهر في كود الواجهة.
+> **ملاحظة أمان:** المفتاح العام (Anon Key) آمن للعرض في الواجهة الأمامية — صلاحياته محدودة بسياسات RLS. المفتاح السري (Service Role Key) يُستخدم فقط في Edge Functions ولا يظهر في كود الواجهة أبداً.
 
 ### أسرار Edge Functions
 
-هذه الأسرار مُعدة على خادم Supabase ولا تحتاج لإضافتها يدوياً:
+تُعدّ على خادم Supabase ولا تحتاج لإضافتها في ملف `.env`:
 
 | الاسم | الوصف |
 |-------|-------|
 | `SUPABASE_URL` | رابط Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | مفتاح Supabase السري (Service Role) |
+| `SUPABASE_SERVICE_ROLE_KEY` | مفتاح Supabase السري |
 | `CHARGILY_SECRET_KEY` | مفتاح Chargily Pay السري |
 
-### لإضافة مفتاح Chargily الخاص بك
+### لإضافة مفتاح Chargily
 
-استبدل `CHARGILY_SECRET_KEY` بقيمتك من لوحة تحكم Chargily:
-
-```bash
-supabase secrets set CHARGILY_SECRET_KEY=sk_test_xxxxxx
-```
-
-أو من خلال لوحة تحكم Supabase: **Project Settings → Edge Functions → Secrets**.
+1. سجّل دخولك في [Chargily Pay](https://epay.chargily.com)
+2. اذهب إلى إعدادات API واحصل على المفتاح السري
+3. في لوحة Supabase: **Project Settings → Edge Functions → Secrets**
+4. أضف: `CHARGILY_SECRET_KEY` = `sk_test_xxxxxx` (للاختبار) أو `sk_live_xxxxxx` (للإنتاج)
 
 ---
 
@@ -194,35 +485,33 @@ supabase secrets set CHARGILY_SECRET_KEY=sk_test_xxxxxx
 
 | الجدول | الوصف |
 |--------|-------|
-| `profiles` | ملفات المستخدمين (اسم، دور، صورة، روابط، رصيد) |
-| `portfolio_items` | أعمال المبدع (صور + روابط) |
-| `digital_products` | المنتجات الرقمية (عنوان، سعر، ملف) |
-| `transactions` | المعاملات المالية (دعم/شراء، الحالة، المبلغ) |
-| `withdrawal_requests` | طلبات سحب الأرباح (CCP/RIP، الحالة) |
+| `profiles` | ملفات المستخدمين (اسم، دور، صورة، رصيد، اشتراك، is_admin) |
+| `listings` | الإعلانات (خدمات + منتجات: عنوان، وصف، تصنيف، سعر، مخزون، تقييم) |
+| `listing_tiers` | باقات الخدمة (اسم، سعر، مدة التسليم، مميزات) |
+| `orders` | الطلبات (مشتري، بائع، إعلان، مبلغ، حالة، حالة الضمان) |
+| `reviews` | التقييمات (تقييم 1-5، تعليق، مراجع، تاريخ) |
+| `conversations` | محادثات بين المشتري والبائع |
+| `messages` | الرسائل الفردية في كل محادثة |
+| `transactions` | المعاملات المالية (دعم/شراء، حالة، مبلغ) |
+| `withdrawal_requests` | طلبات سحب الأرباح (CCP/RIP، حالة) |
+| `portfolio_items` | أعمال البائع (صور + روابط) |
+| `digital_products` | المنتجات الرقمية القديمة (ملفات قابلة للتحميل) |
 
 ### الهجرات (Migrations)
 
-الهجرات تُطبق تلقائياً. لمراجعتها:
+الهجرات تُطبق عبر Supabase MCP ولا تُطبق بكتابتها في المجلد يدوياً:
 
 ```
 supabase/migrations/
-├── 20261016194021_creator_platform_phase1.sql          # الجداول الأساسية + المصادقة
-├── 20261016201113_creator_platform_phase3.sql          # المنتجات الرقمية + المعاملات
-├── 20261016201906_creator_platform_phase4.sql          # بوابات الدفع + webhook
-├── 20261016204122_creator_platform_phase5.sql          # طلبات السحب + دالة request_withdrawal
-├── 20261016204143_creator_platform_phase5_increment_balance.sql  # دالة increment_balance
-├── 20261016205201_creator_platform_phase5_security_fix.sql       # إصلاح أمني (1)
-└── 20261016205227_creator_platform_phase5_security_fix_v2.sql    # إصلاح أمني (2)
+├── ..._creator_platform_phase1.sql             # الجداول الأساسية + المصادقة
+├── ..._creator_platform_phase3.sql             # المنتجات الرقمية + المعاملات
+├── ..._creator_platform_phase4.sql             # بوابات الدفع + webhook
+├── ..._creator_platform_phase5.sql             # طلبات السحب
+├── ..._ekhdemli_marketplace_schema.sql         # سوق Ekhdemli (إعلانات، طلبات، رسائل)
+├── ..._ekhdemli_escrow_messaging_admin.sql     # الضمان + المراسلة + الإدارة
+├── ..._ekhdemli_escrow_chargily_integration.sql # تكامل Chargily مع الضمان
+└── ..._add_stock_to_listings.sql               # عمود المخزون
 ```
-
-### دوال قاعدة البيانات
-
-| الدالة | الوصف | الصلاحيات |
-|-------|-------|-----------|
-| `increment_balance(profile_id, amount)` | زيادة رصيد المبدع عند نجاح الدفع | Service Role فقط |
-| `request_withdrawal(amount, ccp_rip, full_name)` | طلب سحب آمن (يتحقق من الرصيد ذرياً) | المستخدمون المسجلون فقط |
-| `handle_new_user()` | إنشاء ملف تلقائياً عند التسجيل | دالة مشغل (غير قابلة للاستدعاء عبر API) |
-| `set_updated_at()` | تحديث `updated_at` تلقائياً | دالة مشغل (غير قابلة للاستدعاء عبر API) |
 
 ---
 
@@ -230,12 +519,12 @@ supabase/migrations/
 
 ### كيف يعمل الدفع
 
-1. **المستخدم** يضغط "دعم" أو "شراء" على صفحة المبدع
-2. **Edge Function** `chargily-checkout` تنشئ جلسة دفع في Chargily وتسجّل معاملة بحالة `pending`
-3. **المستخدم** يُوجَّه إلى صفحة دفع Chargily (Edahabia أو CIB)
+1. **المشتري** يضغط "شراء" أو "اطلب الخدمة"
+2. **Edge Function** `chargily-checkout` تنشئ جلسة دفع في Chargily وتسجّل طلباً
+3. **المشتري** يُوجَّه إلى صفحة دفع Chargily (Edahabia أو CIB)
 4. بعد الدفع، **Chargily** يرسل webhook إلى `chargily-webhook`
-5. **Edge Function** `chargily-webhook` تتحقق من التوقيع (HMAC-SHA256)، تحدّث حالة المعاملة إلى `paid`، وتزيد رصيد المبدع
-6. **المستخدم** يُوجَّه إلى صفحة النجاح مع رابط التحميل (للمنتجات)
+5. **Edge Function** تتحقق من التوقيع، تحدّث حالة الطلب، وتضع المال في الضمان
+6. **المشتري** يُوجَّه إلى صفحة النجاح
 
 ### إعداد Webhook في Chargily
 
@@ -245,18 +534,42 @@ supabase/migrations/
    ```
    https://[YOUR_SUPABASE_PROJECT_ID].supabase.co/functions/v1/chargily-webhook
    ```
-4. تأكد من تفعيل webhook لأحداث `checkout.paid`, `checkout.failed`, `checkout.canceled`
+4. تأكد من تفعيل webhook لأحداث `checkout.paid`، `checkout.failed`، `checkout.canceled`
 
-### نشر Edge Functions
+---
 
-Edge Functions مُنشأة ومُعدة في `supabase/config.toml`. لإعادة النشر بعد تعديلها:
+## نظام الضمان (Escrow)
 
-```bash
-# من خلال أداة Bolt أو Supabase MCP
-deploy_edge_functions
+نظام الضمان يحمي المشتري والبائع معاً:
+
+### مراحل الطلب
+
+```
+شراء → in_escrow (في الضمان) → delivered (تم التسليم) → confirmed (مؤكد) → اكتمال
+                                    ↓
+                              refunded (استرجاع)
 ```
 
-> **ملاحظة:** لا تستخدم `npx supabase` CLI — غير مدعوم في بيئة Bolt. استخدم أدوات MCP.
+1. **in_escrow**: المال محجوز في الضمان بعد الدفع
+2. **delivered**: البائع سلّم العمل/المنتج
+3. **confirmed**: المشتري أكمل الاستلام → المال يُحوّل للبائع
+4. **refunded**: الإدارة توافق على استرجاع المال للمشتري
+5. **auto_canceled**: الطلب يُلغى تلقائياً إذا لم يُسلّم في الوقت المحدد
+
+### مدة التسليم
+
+- البائع يحدد مدة التسليم عند نشر الخدمة (بالأيام)
+- إذا تجاوز الطلب المدة دون تسليم، يُلغى تلقائياً ويُسترجع المال
+
+---
+
+## نظام التقييمات والمراجعات
+
+- تقييم بالنجوم من 1 إلى 5
+- تعليق نصي مكتوب
+- اسم المراجع + تاريخ المراجعة
+- المتوسط يُعرض على البطاقات وصفحات التفاصيل
+- التقييمات تُعرض فقط بعد إتمام الطلب
 
 ---
 
@@ -264,146 +577,23 @@ deploy_edge_functions
 
 ### حماية الصفوف (RLS)
 
-جميع الجداول لديها RLS مُفعّل. لا يمكن الوصول للبيانات بدون سياسات صريحة:
+جميع الجداول لديها RLS مُفعّل:
 
-- **profiles**: قراءة عامة، تعديل/حذف للمالك فقط
-- **portfolio_items**: قراءة عامة، تعديل/حذف للمالك فقط
-- **digital_products**: قراءة عامة، تعديل/حذف للمالك فقط
-- **transactions**: قراءة للمالك، إدراج عام (للدفع)
-- **withdrawal_requests**: قراءة وإدراج للمالك فقط
+- **profiles**: قراءة عامة، تعديل للمالك فقط
+- **listings**: قراءة عامة (الإعلانات النشطة)، إدارة للبائع فقط
+- **orders**: قراءة للمشتري والبائع فقط
+- **reviews**: قراءة عامة، إدراج بعد إتمام الطلب
+- **messages**: قراءة لأطراف المحادثة فقط
 
-### حماية الدوال (SECURITY DEFINER)
+### دوال آمنة (SECURITY DEFINER)
 
-- `increment_balance`: لا يمكن استدعاؤها إلا عبر Service Role (Edge Functions)
-- `request_withdrawal`: تتطلب جلسة مستخدم مسجّل (`auth.uid()`)
-- دوال المشغلات: غير قابلة للاستدعاء عبر REST API إطلاقاً
+- `increment_balance`: لا تُستدعى إلا عبر Service Role
+- `request_withdrawal`: تتطلب جلسة مستخدم مسجّل، تتحقق ذرياً من الرصيد
+- `handle_new_user()`: إنشاء ملف تلقائياً عند التسجيل (دالة مشغل)
 
-### التحقق من توقيع Webhook
+### التحقق من Webhook
 
-Edge Function `chargily-webhook` تتحقق من توقيع HMAC-SHA256 لكل طلب باستخدام `CHARGILY_SECRET_KEY`. أي طلب بدون توقيع صحيح يُرفض فوراً.
-
-### السحب الآمن
-
-دالة `request_withdrawal`:
-- تتحقق ذرياً (atomic) من الرصيد قبل الخصم — لا يمكن سحب أكثر من المتاح
-- الحد الأدنى للسحب: 2,000 DZD
-- رقم CCP/RIP يجب أن يكون 20 رقماً بالضبط
-- تمنع حالات السباق (race conditions) باستخدام `FOR UPDATE` lock
-
----
-
-## النشر والإنتاج
-
-### نشر الواجهة الأمامية (Vite SPA)
-
-#### الخيار 1: Bolt (الأسهل)
-
-استخدم زر النشر في واجهة Bolt — سيقوم بنشر المشروع تلقائياً مع تكوين المسارات.
-
-#### الخيار 2: Vercel
-
-```bash
-npm i -g vercel
-vercel
-```
-
-أضف متغيرات البيئة في لوحة تحكم Vercel:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-
-أضف قاعدة إعادة كتابة (Rewrite) في `vercel.json`:
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
-}
-```
-
-#### الخيار 3: Netlify
-
-```bash
-npm i -g netlify-cli
-netlify deploy --prod
-```
-
-أضف ملف `public/_redirects`:
-```
-/*    /index.html   200
-```
-
-#### الخيار 4: أي خادم ثابت (Nginx, Apache)
-
-```bash
-npm run build
-# انسخ محتويات dist/ إلى خادمك
-```
-
-إعداد Nginx للـ SPA:
-```nginx
-server {
-    listen 80;
-    server_name supportlocal.dz;
-    root /var/www/supportlocal/dist;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location ~* \.(js|css|png|jpg|svg|ico|woff2)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-}
-```
-
-### نشر البنية التحتية (Supabase)
-
-Supabase مُجهز ومُعد مسبقاً. للإنتاج:
-
-1. **اعد URL الويبوك** في Chargily ليشير إلى رابط الإنتاج:
-   ```
-   https://[PROJECT_ID].supabase.co/functions/v1/chargily-webhook
-   ```
-
-2. **أضف مفاتيح Chargily** كـ Edge Function Secrets في Supabase
-
-3. **إعدادات المصادقة**: في لوحة Supabase → Authentication:
-   - فعّل Email/Password
-   - عطّل Email Confirmation (للتسجيل المباشر)
-
-4. **إعدادات التخزين**: تأكد أن buckets التالية عامة (Public):
-   - `portfolio-images`
-   - `product-files`
-
-### شهادة SSL (Let's Encrypt)
-
-```bash
-sudo certbot --nginx -d supportlocal.dz
-```
-
----
-
-## SEO والأداء
-
-### وسوم Open Graph
-
-ملف `index.html` يحتوي على وسوم OG افتراضية. عند زيارة صفحة مبدع (`/u/username`)، تتحدث الوسوم ديناميكياً لتعرض:
-- اسم المبدع في العنوان
-- النبذة (bio) في الوصف
-- صورة المبدع (avatar) في صورة المعاينة
-
-### robots.txt
-
-يسمح لمحركات البحث بفهرسة الصفحات العامة ويمنع الوصول للصفحات الخاصة.
-
-### الخريطة الموقعية (Sitemap)
-
-ملف `src/lib/sitemap.ts` يولّد خريطة موقع XML ديناميكية من جميع المبدعين المسجلين.
-
-### تحسينات الأداء
-
-- **تقسيم الكود (Code Splitting)**: البناء مقسّم إلى 6 حزم منفصلة (React, Supabase, Charts, Forms, UI, App) لتحميل أسرع
-- **التخزين المؤقت للموارد الثابتة**: إعدادات Nginx تضع `Cache-Control: immutable` للملفات الثابتة
-- **التحميل الكسول**: React Router يقسّم الصفحات تلقائياً
+Edge Function `chargily-webhook` تتحقق من توقيع HMAC-SHA256 لكل طلب. أي طلب بدون توقيه صحيح يُرفض فوراً.
 
 ---
 
@@ -413,30 +603,27 @@ sudo certbot --nginx -d supportlocal.dz
 
 **السبب:** إعادة توجيه المسارات غير مُعدة للـ SPA.
 
-**الحل:** أضف قاعدة إعادة كتابة (rewrite) لترسل كل الطلبات إلى `index.html` (انظر قسم النشر).
+**الحل:** تأكد من وجود قاعدة إعادة كتابة لترسل كل الطلبات إلى `index.html`:
+- **Nginx:** `try_files $uri $uri/ /index.html;`
+- **Netlify:** ملف `public/_redirects` بمحتوى `/* /index.html 200`
+- **Vercel:** تتم تلقائياً
 
 ### المشكلة: "Invalid signature" في Webhook
 
 **السبب:** `CHARGILY_SECRET_KEY` غير مُعد أو غير صحيح.
 
-**الحل:** تأكد من إضافة المفتاح السري الصحيح من Chargily كـ Edge Function Secret.
+**الحل:** أضف المفتاح السري الصحيح من Chargily في Supabase → Edge Functions → Secrets.
 
 ### المشكلة: المعاملات لا تتحدث
 
-**السبب:** webhook URL في Chargily لا يشير إلى الرابط الصحيح.
+**السبب:** رابط webhook في Chargily غير صحيح.
 
-**الحل:** حدّث رابط webhook في لوحة Chargily ليشير إلى:
+**الحل:** حدّث رابط webhook في لوحة Chargily إلى:
 ```
 https://[PROJECT_ID].supabase.co/functions/v1/chargily-webhook
 ```
 
-### المشكلة: "Failed to increment balance"
-
-**السبب:** دالة `increment_balance` لا تملك صلاحيات، أو `profile_id` غير صحيح.
-
-**الحل:** تأكد أن Service Role Key مُعد كـ Edge Function Secret، وأن المعاملة تملك `profile_id` صحيح.
-
-### المشكلة: لا يمكن رفع الصور
+### المشكلة: لا يمكن رفع الصور أو الملفات
 
 **السبب:** buckets التخزين غير مُنشأة أو غير عامة.
 
@@ -449,6 +636,12 @@ https://[PROJECT_ID].supabase.co/functions/v1/chargily-webhook
 **السبب:** Email Confirmation مُفعّل في Supabase.
 
 **الحل:** في لوحة Supabase → Authentication → Providers → Email، عطّل "Confirm email".
+
+### المشكلة: لوحة الإدارة لا تظهر
+
+**السبب:** حسابك لا يملك صلاحية `is_admin`.
+
+**الحل:** في Supabase → Table Editor → profiles، اضبط `is_admin = true` لحسابك.
 
 ---
 
