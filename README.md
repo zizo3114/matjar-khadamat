@@ -662,4 +662,345 @@ supabase/migrations/
 
 ### لماذا تحتاج Supabase خاص بك؟
 
-المشروع الحالي مربوط بـ Supabase جاهز (أُنشئ أثناء التطوير). أن
+المشروع الحالي مربوط بـ Supabase جاهز (أُنشئ أثناء التطوير). أنت لا تملك الوصول لحسابه. إذا أردت تحكماً كاملاً — رؤية البيانات، تعديل الجداول، إدارة المستخدمين — يجب أن تنشئ Supabase خاص بك وتربط المشروع به.
+
+### الخطوة 1: إنشاء حساب و مشروع على Supabase
+
+1. اذهب إلى [supabase.com](https://supabase.com) واضغط **Start your project**
+2. سجّل حساباً (بـ GitHub أو الإيميل)
+3. اضغط **New Project**
+4. اختر اسماً للمشروع (مثلاً `ekhdemli`)
+5. أدخل كلمة مرور قوية لقاعدة البيانات — **احفظها جيداً** (لن تظهر مرة أخرى)
+6. اختر المنطقة الأقرب (مثلاً `Frankfurt` لأوروبا أو `Singapore` لآسيا)
+7. اضغط **Create new project** وانتظر دقيقتين حتى يجهّز
+
+### الخطوة 2: نسخ بيانات الاتصال
+
+1. في لوحة مشروعك الجديد، اذهب إلى **Project Settings** (أيقونة الترس أسفل اليسار)
+2. اضغط **API**
+3. ستجد قسمين مهمين:
+   - **Project URL** — انسخه (مثل `https://xxxxx.supabase.co`)
+   - **anon public key** — انسخه (سلسلة طويلة تبدأ بـ `eyJ...`)
+
+### الخطوة 3: تحديث ملف `.env` في حاسوبك
+
+افتح ملف `.env` الموجود في جذر المشروع بمحرر نصوص (Notepad أو VS Code) واستبدل القيمتين:
+
+```
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
+```
+
+> احتفظ بالقيمتين القديمتين في ملف نصي جانبي كنسخة احتياطية — قد تحتاجها إذا أردت الرجوع.
+
+### الخطوة 4: تطبيق هجرات قاعدة البيانات (مهم جداً)
+
+القاعدة الجديدة فارغة تماماً. يجب إنشاء كل الجداول والعلاقات والدوال. الهجرات موجودة في المشروع في مجلد `supabase/migrations/` — لكنها لا تُطبق تلقائياً بمجرد نسخ الملفات.
+
+**كيف تُطبق الهجرات؟**
+
+هذا الجزء يحتاج تطبيقها على Supabase. هناك طريقتان:
+
+#### الطريقة الأولى: عبر Supabase SQL Editor (يدوياً)
+
+1. في لوحة Supabase، اذهب إلى **SQL Editor**
+2. اضغط **New query**
+3. افتح كل ملف في مجلد `supabase/migrations/` بمحرر نصوص على حاسوبك
+4. انسخ محتواه بالكامل والصقه في SQL Editor
+5. اضغط **Run**
+6. كرّر ذلك مع كل ملف **بالترتيب** (من الأقدم للأحدث حسب التاريخ في اسم الملف):
+
+```
+supabase/migrations/
+├── 20261016194021_creator_platform_phase1.sql              ← ابدأ بهذا
+├── 20261016201113_creator_platform_phase3.sql
+├── 20261016201906_creator_platform_phase4.sql
+├── 20261016204122_creator_platform_phase5.sql
+├── 20261016204143_creator_platform_phase5_increment_balance.sql
+├── 20261016205201_creator_platform_phase5_security_fix.sql
+├── 20261016205227_creator_platform_phase5_security_fix_v2.sql
+├── 20261016225003_ekhdemli_marketplace_schema.sql
+├── 20261016231447_ekhdemli_escrow_messaging_admin.sql
+├── 20261016234510_ekhdemli_escrow_chargily_integration.sql
+└── 20261017003412_add_stock_to_listings.sql               ← انتهِ بهذا
+```
+
+> **تنبيه:** الترتيب مهم! كل هجرة تعتمد على التي قبلها. إذا طبقتها بترتيب خاطئ ستحصل على أخطاء.
+
+#### الطريقة الثانية: عبر Supabase MCP (تلقائياً)
+
+إذا كنت تستخدم بيئة تطوير تدعم Supabase MCP (مثل Bolt)، تُطبق الهجرات تلقائياً عند إضافتها — لا حاجة لنسخها يدوياً.
+
+### الخطوة 5: إعداد المصادقة
+
+1. في لوحة Supabase → **Authentication** → **Providers**
+2. فعّل **Email** (مفعّل افتراضياً)
+3. اذهب إلى **Authentication** → **Sign In / Up**
+4. عطّل **"Confirm email"** — حتى يتمكن المستخدمون من التسجيل بدون تأكيد الإيميل (مهم لموقع عربي محلي)
+
+### الخطوة 6: إنشاء مجلدات التخزين
+
+اتبع الخطوات في قسم [تخزين الصور والملفات (Storage)](#تخزين-الصور-والملفات-storage) أعلاه. أنشئ المجلدين:
+- `portfolio-images` (Public)
+- `product-files` (Public)
+
+### الخطوة 7: إضافة دوال الدفع (Edge Functions)
+
+دوال الدفع (`chargily-checkout` و `chargily-webhook`) موجودة في المشروع في:
+```
+supabase/functions/
+├── chargily-checkout/index.ts
+└── chargily-webhook/index.ts
+```
+
+لنشرها على Supabase الجديد:
+1. في لوحة Supabase → **Edge Functions**
+2. اضغط **New Function**
+3. أنشئ دالة باسم `chargily-checkout` والصق محتوى الملف المقابل
+4. كرّر مع `chargily-webhook`
+
+ثم أضف المفاتيح السرية:
+- في **Edge Functions → Secrets**:
+  - `SUPABASE_URL` = رابط مشروعك
+  - `SUPABASE_SERVICE_ROLE_KEY` = تجده في Project Settings → API → `service_role`
+  - `CHARGILY_SECRET_KEY` = مفتاحك من [Chargily Pay](https://epay.chargily.com)
+
+### الخطوة 8: إنشاء حساب إدارة
+
+بعد تطبيق الهجرات وتسجيل أول مستخدم:
+1. سجّل حساباً في الموقع (صفحة `/register`)
+2. اذهب إلى Supabase → **Table Editor** → `profiles`
+3. ابحث عن صفك واضبط `is_admin = true`
+4. الآن يمكنك الدخول إلى `/admin`
+
+### الخطوة 9: رابط Webhook في Chargily
+
+في لوحة [Chargily Pay](https://epay.chargily.com) → Webhook Settings، ضع:
+```
+https://[YOUR_PROJECT_ID].supabase.co/functions/v1/chargily-webhook
+```
+استبدل `[YOUR_PROJECT_ID]` بمعرّف مشروعك (تجده في رابط Supabase).
+
+### ملخص: ماذا يحدث عند تغيير Supabase؟
+
+| الخطوة | ماذا تفعل | أين |
+|--------|----------|-----|
+| 1 | أنشئ مشروع Supabase جديد | [supabase.com](https://supabase.com) |
+| 2 | انسخ URL و Anon Key | Supabase Dashboard → Project Settings → API |
+| 3 | استبدل القيم في `.env` | حاسوبك |
+| 4 | طبّق كل الهجرات بالترتيب | Supabase SQL Editor |
+| 5 | عطّل "Confirm email" | Supabase → Authentication |
+| 6 | أنشئ مجلدات التخزين | Supabase → Storage |
+| 7 | انشر دوال الدفع + المفاتيح | Supabase → Edge Functions |
+| 8 | اضبط `is_admin = true` لحسابك | Supabase → Table Editor |
+| 9 | حدّث رابط Webhook | لوحة Chargily |
+
+> **بدون الخطوات 1-6 لن يعمل الموقع إطلاقاً.** الخطوات 7-9 ضرورية لعمل الدفع والإدارة.
+
+---
+
+## قائمة التحقق قبل الإطلاق
+
+قبل أن يصبح موقعك جاهزاً للعمل بشكل كامل، تأكد من إعداد كل العناصر التالية. كل عنصر مشروح بالتفصيل في أقسامه الخاصة:
+
+### إعدادات ضرورية (بدونها لن يعمل الموقع)
+
+| # | العنصر | مكان الإعداد | الشرح |
+|---|--------|-------------|-------|
+| 1 | **رابط ومفتاح Supabase** | ملف `.env` | `VITE_SUPABASE_URL` و `VITE_SUPABASE_ANON_KEY` — تجدها في Supabase Dashboard → Project Settings → API |
+| 2 | **مصادقة Email/Password** | Supabase Dashboard → Authentication → Providers | فعّل Email، وعطّل "Confirm email" ليتمكن المستخدمون من التسجيل مباشرة |
+| 3 | **مجلدات التخزين** | Supabase Dashboard → Storage | أنشئ `portfolio-images` و `product-files` كـ Public — [شرح كامل](#تخزين-الصور-والملفات-storage) |
+| 4 | **سياسات التخزين** | Supabase Dashboard → Storage → Policies | أضف سياسات القراءة العامة والرفع للمستخدمين المسجلين |
+| 5 | **هجرات قاعدة البيانات** | Supabase MCP | جميع الهجرات في مجلد `supabase/migrations/` يجب أن تكون مُطبقة — [شرح كامل](#قاعدة-البيانات) |
+
+### إعدادات الدفع (بدونها لا تكت عمليات البيع)
+
+| # | العنصر | مكان الإعداد | الشرح |
+|---|--------|-------------|-------|
+| 6 | **مفتاح Chargily السري** | Supabase Dashboard → Edge Functions → Secrets | أضف `CHARGILY_SECRET_KEY` بقيمتك من [Chargily Pay](https://epay.chargily.com) |
+| 7 | **رابط Webhook في Chargily** | لوحة Chargily → Webhook Settings | ضع `https://[PROJECT_ID].supabase.co/functions/v1/chargily-webhook` |
+| 8 | **نشر Edge Functions** | Supabase MCP | تأكد أن `chargily-checkout` و `chargily-webhook` منشورتان — [شرح كامل](#الدفع-عبر-chargily) |
+
+### إعدادات النشر والدومين
+
+| # | العنصر | مكان الإعداد | الشرح |
+|---|--------|-------------|-------|
+| 9 | **بناء المشروع** | موجه الأوامر | شغّل `npm run build` لإنتاج ملفات `dist/` |
+| 10 | **رفع الملفات للخادم** | Vercel / Netlify / VPS | انسخ محتويات `dist/` — [شرح كامل](#التشغيل-على-خادم-server-وربطه-بدومين) |
+| 11 | **إعادة توجيه SPA** | إعداد الخادم (Nginx/Vercel/Netlify) | كل المسارات يجب توجيهها إلى `index.html` وإلا ستظهر صفحة بيضاء |
+| 12 | **شهادة SSL** | Certbot (على VPS) أو تلقائي (Vercel/Netlify) | الموقع يجب أن يعمل بـ HTTPS — [شرح كامل](#التشغيل-على-خادم-server-وربطه-بدومين) |
+| 13 | **توجيه DNS للدومين** | لوحة تحكم الدومين | سجل A (لـ VPS) أو CNAME (لـ Vercel/Netlify) يشير إلى خادمك |
+
+### إعدادات اختيارية (للتحسين)
+
+| # | العنصر | مكان الإعداد | الشرح |
+|---|--------|-------------|-------|
+| 14 | **حساب الإدارة** | Supabase Dashboard → Table Editor → profiles | اضبط `is_admin = true` لحسابك للوصول إلى `/admin` |
+| 15 | **روابط استرجاع بعد الدفع** | صفحة نجاح الدفع | تأكد أن `payment/success` و `payment/failed` تعمل بعد رجوع المستخدم من Chargily |
+
+### ماذا تعدّل في ملفات حاسوبك مقابل ماذا تعدّه على مواقع أونلاين
+
+المشروع فيه مئات الملفات، لكن **معظمها لا يحتاج أي تعديل**. إليك التمييز بوضوح:
+
+#### (أ) ملفات على حاسوبك — تعدّلها بمحرر نصوص
+
+> "محرر نصوص" يعني برنامج مثل **Notepad** (موجود في Windows) أو **VS Code** (مجاني، الأفضل). تفتح الملف، تعدّل النص، تحفظ. هذه الملفات معدّلة مسبقاً وتعمل كما هي — عدّلها فقط إذا أردت تغيير شيء.
+
+| ماذا تريد تغييره | أي ملف تفتحه | أين تجده في حاسوبك | ماذا تعدّل بالضبط |
+|------------------|-------------|-------------------|------------------|
+| **ربط قاعدة بياناتك** | `.env` | جذر المشروع (المجلد الرئيسي) | استبدل `VITE_SUPABASE_URL` و `VITE_SUPABASE_ANON_KEY` بقيم مشروعك من لوحة Supabase |
+| **ألوان الموقع** | `src/index.css` | `src` ← `index.css` | في أعلى الملف ستجد متغيرات ألوان مثل `--primary`، `--background` — غيّر القيم |
+| **الوضع الليلي** | `src/index.css` | `src` ← `index.css` | ابحث عن `.dark` — غيّر الألوان تحتها |
+| **اسم الموقع "Ekhdemli"** | `src/components/marketplace-layout.tsx` | `src` ← `components` ← `marketplace-layout.tsx` | ابحث عن كلمة "Ekhdemli" وغيّرها لاسمك |
+| **التصنيفات (إضافة/حذف)** | `src/lib/marketplace.ts` | `src` ← `lib` ← `marketplace.ts` | ستجد قائمة بأسماء التصنيفات — أضف أو احذف |
+| **نص الصفحة الرئيسية** | `src/pages/home.tsx` | `src` ← `pages` ← `home.tsx` | العناوين والأوصاف — عدّل النصوص العربية |
+| **أسعار الاشتراكات** | `src/pages/pricing.tsx` | `src` ← `pages` ← `pricing.tsx` | الأسعار والمميزات |
+| **وصف الموقع لمحركات البحث** | `index.html` | جذر المشروع | وسوم `<title>` و `<meta name="description">` |
+| **صورة الخلفية للرئيسية** | `public/hero-bg.webp` | `public` ← `hero-bg.webp` | استبدل بصورتك مع الحفاظ على نفس الاسم والامتداد |
+| **توجيه محركات البحث** | `public/robots.txt` | `public` ← `robots.txt` | عدّل القيم حسب حاجتك |
+| **رسوم عمولة المنصة** | `supabase/functions/chargily-checkout/index.ts` | `supabase` ← `functions` ← `chargily-checkout` ← `index.ts` | ابحث عن نسبة العمولة وغيّرها |
+| **مدة التسليم القصوى** | `src/pages/publish-service.tsx` | `src` ← `pages` ← `publish-service.tsx` | الحد الأقصى لعدد الأيام |
+
+#### (ب) إعدادات على مواقع أونلاين — لا تعدّلها في ملفات حاسوبك
+
+> هذه الإعدادات موجودة على مواقع خارجية (Supabase، Chargily). لا توجد في ملفات حاسوبك — تعدّلها من متصفحك عبر الدخول للمواقع.
+
+| ماذا تريد إعداده | أين تذهب | كيف |
+|------------------|---------|-----|
+| **إنشاء حساب Supabase** | [supabase.com](https://supabase.com) | سجّل حساباً، أنشئ مشروعاً جديداً، انسخ URL و Anon Key إلى ملف `.env` |
+| **تعطيل تأكيد الإيميل** | Supabase Dashboard → Authentication → Providers → Email | عطّل "Confirm email" ليسجل المستخدمون مباشرة |
+| **إنشاء مجلدات التخزين** | Supabase Dashboard → Storage | أنشئ `portfolio-images` و `product-files` كـ Public — [شرح كامل](#تخزين-الصور-والملفات-storage) |
+| **سياسات التخزين** | Supabase Dashboard → Storage → Policies | أضف سياسات القراءة والرفع |
+| **مفتاح Chargily السري** | Supabase Dashboard → Edge Functions → Secrets | أضف `CHARGILY_SECRET_KEY` بقيمتك من Chargily |
+| **رابط Webhook في Chargily** | [epay.chargily.com](https://epay.chargily.com) → Webhook Settings | ضع رابط الـ webhook الخاص بمشروعك |
+| **صلاحية الإدارة** | Supabase Dashboard → Table Editor → profiles | اضبط `is_admin = true` لحسابك |
+| **نطاق قاعدة البيانات** | Supabase Dashboard — عبر أدوات MCP | الهجرات في `supabase/migrations/` تُطبق عبر Supabase MCP، لا يدوياً |
+
+#### (ج) ملفات لا تلمسها إطلاقاً
+
+هذه الملفات تعمل تلقائياً ولا تحتاج لأي تعديل:
+
+- `src/components/ui/` — كل المكونات (أزرار، نوافذ، جداول...) — تعمل كما هي
+- `src/lib/utils.ts` — دوال مساعدة عامة
+- `src/lib/supabase.ts` — عميل قاعدة البيانات — يعمل تلقائياً ببيانات `.env`
+- `src/contexts/auth-context.tsx` — نظام المصادقة
+- `src/components/route-guards.tsx` — حماية الصفحات
+- `src/components/theme-provider.tsx` — الوضع الليلي/النهاري
+- `package.json` و `package-lock.json` — قائمة المكتبات
+- `tsconfig*.json` — إعدادات TypeScript
+- `vite.config.ts` — إعدادات البناء
+- `supabase/config.toml` — إعدادات Edge Functions
+- كل ملفات `supabase/migrations/` — هجرات قاعدة البيانات (تُطبق تلقائياً)
+
+---
+
+## دليل هيكل المجلدات (ماذا يفعل كل مجلد؟)
+
+عندما تفتح المشروع في حاسوبك سترى هذه المجلدات الرئيسية:
+
+```
+project/
+├── src/                    ← هنا كود الموقع (كل ما يراه الزائر)
+│   ├── pages/              ← كل صفحة في الموقع = ملف واحد هنا
+│   ├── components/         ← قطع واجهة قابلة لإعادة الاستخدام
+│   │   └── ui/             ← مكونات جاهزة (لا تلمسها)
+│   ├── lib/                ← منطق التطبيق + الاتصال بقاعدة البيانات
+│   └── contexts/           ← حالة المستخدم (تسجيل الدخول/الخروج)
+├── public/                 ← ملفات ثابتة (صور، robots.txt)
+├── supabase/               ← كل ما يخص الخلفية (قاعدة البيانات + الدوال)
+│   ├── migrations/         ← أوامر إنشاء الجداول (لا تلمسها)
+│   └── functions/          ← دوال الدفع (تحتاج تعديل المفتاح فقط)
+├── .env                    ← ★ ملف البيانات (الأهم — عدّله أول شيء)
+├── index.html              ← صفحة الموقع الأولى + وسوم SEO
+├── package.json            ← قائمة المكتبات (لا تلمسه)
+└── vite.config.ts          ← إعدادات البناء (لا تلمسه)
+```
+
+### ترتيب أولوياتك عند التعديل
+
+1. **ابدأ بـ `.env`** — ضع بيانات Supabase الخاصة بك (أهم خطوة)
+2. **عدّل اسم الموقع** — في `marketplace-layout.tsx`
+3. **عدّل نص الصفحة الرئيسية** — في `home.tsx`
+4. **عدّل الألوان** — في `index.css` (إن أردت)
+5. **اضبط الإعدادات على Supabase** — من المتصفح (مجلدات التخزين، المصادقة، الدفع)
+6. **ابنِ وانشر** — `npm run build` ثم ارفع `dist/`
+
+> **القاعدة الذهبية:** إذا لم تكن متأكداً من ملف — لا تلمسه. معظم الملفات تعمل تلقائياً والمشروع جاهز كما هو. فقط `.env` ضروري للتشغيل، وباقي التعديلات اختيارية.
+
+---
+
+## الأمان
+
+### حماية الصفوف (RLS)
+
+جميع الجداول لديها RLS مُفعّل:
+
+- **profiles**: قراءة عامة، تعديل للمالك فقط
+- **listings**: قراءة عامة (الإعلانات النشطة)، إدارة للبائع فقط
+- **orders**: قراءة للمشتري والبائع فقط
+- **reviews**: قراءة عامة، إدراج بعد إتمام الطلب
+- **messages**: قراءة لأطراف المحادثة فقط
+
+### دوال آمنة (SECURITY DEFINER)
+
+- `increment_balance`: لا تُستدعى إلا عبر Service Role
+- `request_withdrawal`: تتطلب جلسة مستخدم مسجّل، تتحقق ذرياً من الرصيد
+- `handle_new_user()`: إنشاء ملف تلقائياً عند التسجيل (دالة مشغل)
+
+### التحقق من Webhook
+
+Edge Function `chargily-webhook` تتحقق من توقيع HMAC-SHA256 لكل طلب. أي طلب بدون توقيه صحيح يُرفض فوراً.
+
+---
+
+## استكشاف الأخطاء
+
+### المشكلة: صفحة بيضاء بعد النشر
+
+**السبب:** إعادة توجيه المسارات غير مُعدة للـ SPA.
+
+**الحل:** تأكد من وجود قاعدة إعادة كتابة لترسل كل الطلبات إلى `index.html`:
+- **Nginx:** `try_files $uri $uri/ /index.html;`
+- **Netlify:** ملف `public/_redirects` بمحتوى `/* /index.html 200`
+- **Vercel:** تتم تلقائياً
+
+### المشكلة: "Invalid signature" في Webhook
+
+**السبب:** `CHARGILY_SECRET_KEY` غير مُعد أو غير صحيح.
+
+**الحل:** أضف المفتاح السري الصحيح من Chargily في Supabase → Edge Functions → Secrets.
+
+### المشكلة: المعاملات لا تتحدث
+
+**السبب:** رابط webhook في Chargily غير صحيح.
+
+**الحل:** حدّث رابط webhook في لوحة Chargily إلى:
+```
+https://[PROJECT_ID].supabase.co/functions/v1/chargily-webhook
+```
+
+### المشكلة: لا يمكن رفع الصور أو الملفات
+
+**السبب:** buckets التخزين غير مُنشأة أو غير عامة.
+
+**الحل:** في لوحة Supabase → Storage، أنشئ buckets:
+- `portfolio-images` (Public)
+- `product-files` (Public)
+
+### المشكلة: تسجيل الدخول لا يعمل
+
+**السبب:** Email Confirmation مُفعّل في Supabase.
+
+**الحل:** في لوحة Supabase → Authentication → Providers → Email، عطّل "Confirm email".
+
+### المشكلة: لوحة الإدارة لا تظهر
+
+**السبب:** حسابك لا يملك صلاحية `is_admin`.
+
+**الحل:** في Supabase → Table Editor → profiles، اضبط `is_admin = true` لحسابك.
+
+---
+
+## الترخيص
+
+هذا المشروع مُرخّص للاستخدام الخاص. جميع الحقوق محفوظة.
