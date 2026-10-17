@@ -19,8 +19,9 @@
 - [نظام الضمان (Escrow)](#نظام-الضمان-escrow)
 - [نظام التقييمات والمراجعات](#نظام-التقييمات-والمراجعات)
 - [تخزين الصور والملفات (Storage)](#تخزين-الصور-والملفات-storage)
-- [الأمان](#الأمان)
 - [قائمة التحقق قبل الإطلاق](#قائمة-التحقق-قبل-الإطلاق)
+- [دليل هيكل المجلدات (ماذا يفعل كل مجلد؟)](#دليل-هيكل-المجلدات-ماذا-يفعل-كل-مجلد)
+- [الأمان](#الأمان)
 - [استكشاف الأخطاء](#استكشاف-الأخطاء)
 
 ---
@@ -661,5 +662,4 @@ supabase/migrations/
 | # | العنصر | مكان الإعداد | الشرح |
 |---|--------|-------------|-------|
 | 1 | **رابط ومفتاح Supabase** | ملف `.env` | `VITE_SUPABASE_URL` و `VITE_SUPABASE_ANON_KEY` — تجدها في Supabase Dashboard → Project Settings → API |
-| 2 | **مصادقة Email/Password** | Supabase Dashboard → Authentication → Providers | فعّل Email، وعطّل "Confirm email" ليتمكن المستخدمون من التسجيل مباشرة |
-| 3 | **مجلدات التخزين** | Supabase Dashboard → Storage | أنشئ `portfol
+| 2 | **مصادقة Email/Password** | Supabase Dashboard → Authentication → Providers | فعّل Email، وعطّل "Confirm email" ليتمكن المستخدمون من التسج
