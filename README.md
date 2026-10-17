@@ -171,13 +171,15 @@ project/
 │       └── payment-failed.tsx         # فشل الدفع
 ├── supabase/
 │   ├── config.toml                    # إعدادات Edge Functions
-│   ├── migrations/                    # هجرات قاعدة البيانات
+│   ├── setup_database.sql             # ★ ملف موحد: كل الجداول بضغطة زر
+│   ├── migrations/                    # هجرات قاعدة البيانات (منفصلة)
 │   └── functions/
 │       ├── chargily-checkout/         # إنشاء جلسة دفع
 │       └── chargily-webhook/          # استقبال إشعارات الدفع
 ├── public/
 │   ├── hero-bg.webp                   # صورة الخلفية
-│   └── robots.txt                     # توجيه محركات البحث
+│   ├── robots.txt                     # توجيه محركات البحث
+│   └── _redirects                     # توجيه مسارات Netlify (لا تلمسه)
 ├── index.html                         # وسوم SEO و Open Graph
 ├── vite.config.ts                     # إعدادات البناء + تقسيم الكود
 └── package.json
@@ -335,24 +337,59 @@ Vercel سيبني المشروع تلقائياً ويعطيك رابطاً مث
    - **Name:** @ أو www
    - **Value:** cname.vercel-dns.com
 
-### الطريقة الثانية: النشر على Netlify
+### الطريقة الثانية: النشر على Netlify (موصى بها — الأسهل والمجاني)
+
+> **لماذا Netlify؟** بعد دراسة البدائل، تم اختيار Netlify نظراً لسهولتها الكبيرة في استضافة مواقع تطبيقات الصفحة الواحدة (Single Page Applications) المبنية بـ Vite و React، فضلاً عن توفيرها خطة مجانية ممتازة ومستقرة.
+
+> **ملف إعادة التوجيه جاهز مسبقاً:** الملف `public/_redirects` موجود في المشروع ويحتوي على السطر `/* /index.html 200` — هذا يضمن أن جميع المسارات (مثل `/login` و `/services`) تعمل بدون خطأ 404 عند تحديث الصفحة. بدون هذا الملف، عند تحديث صفحة مثل `/login` سيظهر خطأ 404 الشهير. الملف جاهز ولا تحتاج لإضافته.
+
+#### الطريقة أ: عبر موقع Netlify (بدون تثبيت أي شيء)
+
+1. اذهب إلى [netlify.com](https://app.netlify.com) وسجّل حساباً (يمكنك التسجيل بـ GitHub)
+2. اضغط **Add new site** ← **Import an existing project**
+3. اربط مستودع GitHub الخاص بالمشروع
+4. اضبط الإعدادات:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+5. **قبل الضغط على Deploy، اضغط "Show advanced" أو "Environment variables"**
+6. أضف متغيرين:
+   - **المتغير الأول:** `VITE_SUPABASE_URL` — قيمته: رابط مشروع Supabase الخاص بك (مثل `https://xxxxx.supabase.co`)
+   - **المتغير الثاني:** `VITE_SUPABASE_ANON_KEY` — قيمته: المفتاح العام من Supabase (يبدأ بـ `eyJ...`)
+7. اضغط **Deploy site**
+
+سيقوم Netlify ببناء الموقع ورفعه فوراً. ستحصل على رابط مثل `ekhdemli.netlify.app`.
+
+> **ملاحظة هامة عن متغيرات البيئة:** ملف `.env` الموجود في حاسوبك لا يُرفع إلى Netlify (مستثنى عبر `.gitignore`). لذلك **يجب** إضافة متغيرات البيئة في لوحة تحكم Netlify نفسها (Site settings → Environment variables) لكي يتم تضمينها أثناء البناء.
+
+#### إزالة شارة "Powered by Netlify" من واجهة الموقع
+
+1. في لوحة Netlify ← **Site settings** ← **General**
+2. ابحث عن قسم **Badge**
+3. عطّل الخيار **"Display Netlify badge"**
+4. ستصبح واجهة الموقع نظيفة واحترافية بدون أي شارة
+
+#### الطريقة ب: عبر سطر الأوامر (Netlify CLI)
 
 ```
 npm i -g netlify-cli
-npm run build
-netlify deploy --prod
+netlify login
+netlify deploy --build --prod
 ```
 
-أضف ملف `public/_redirects` بمحتوى:
-```
-/*    /index.html   200
-```
+عند asked عن build command اكتب: `npm run build`
+وعند asked عن publish directory اكتب: `dist`
 
-> هذا الملف ضروري لأن الموقع SPA (صفحة واحدة) — كل المسارات يجب أن توجّه إلى `index.html`.
+#### ربط دومين خاص على Netlify
 
-أضف متغيرات البيئة في لوحة Netlify:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+1. في لوحة Netlify ← **Site settings** ← **Domain management** ← **Add custom domain**
+2. أضف دومينك، مثلاً `ekhdemli.com`
+3. في لوحة تحكم دومينك، وجّه DNS:
+   - **Type:** CNAME
+   - **Name:** @ أو www
+   - **Value:** `[your-site-name].netlify.app`
+4. Netlify يوفّر شهادة SSL (HTTPS) تلقائياً ومجاناً
+
+> **ملاحظة بخصوص المسارات:** ملف `public/_redirects` موجود في المشروع ويخبر Netlify بتوجيه جميع المسارات إلى `index.html`. بدون هذا الملف، عند تحديث صفحة مثل `/login` سيظهر خطأ 404. الملف جاهز ولا تحتاج لإضافته.
 
 ### الطريقة الثالثة: خادم VPS (Ubuntu/Linux)
 
@@ -503,18 +540,22 @@ Certbot سيثبت الشهادة تلقائياً ويُعد Nginx لإعادة
 
 ### الهجرات (Migrations)
 
-الهجرات تُطبق عبر Supabase MCP ولا تُطبق بكتابتها في المجلد يدوياً:
+> **الأسهل:** استخدم ملف `supabase/setup_database.sql` الموحد — انسخ محتواه والصقه في Supabase SQL Editor واضغط Run. هذا يطبّق كل الهجرات دفعة واحدة بالترتيب الصحيح.
+
+إذا فضّلت تطبيقها منفصلة، الهجرات في مجلد `supabase/migrations/`:
 
 ```
-supabase/migrations/
-├── ..._creator_platform_phase1.sql             # الجداول الأساسية + المصادقة
-├── ..._creator_platform_phase3.sql             # المنتجات الرقمية + المعاملات
-├── ..._creator_platform_phase4.sql             # بوابات الدفع + webhook
-├── ..._creator_platform_phase5.sql             # طلبات السحب
-├── ..._ekhdemli_marketplace_schema.sql         # سوق Ekhdemli (إعلانات، طلبات، رسائل)
-├── ..._ekhdemli_escrow_messaging_admin.sql     # الضمان + المراسلة + الإدارة
-├── ..._ekhdemli_escrow_chargily_integration.sql # تكامل Chargily مع الضمان
-└── ..._add_stock_to_listings.sql               # عمود المخزون
+supabase/
+├── setup_database.sql                             # ★ ملف موحد — كل الجداول بضغطة زر
+└── migrations/
+    ├── ..._creator_platform_phase1.sql             # الجداول الأساسية + المصادقة
+    ├── ..._creator_platform_phase3.sql             # المنتجات الرقمية + المعاملات
+    ├── ..._creator_platform_phase4.sql             # بوابات الدفع + webhook
+    ├── ..._creator_platform_phase5.sql             # طلبات السحب
+    ├── ..._ekhdemli_marketplace_schema.sql         # سوق Ekhdemli (إعلانات، طلبات، رسائل)
+    ├── ..._ekhdemli_escrow_messaging_admin.sql     # الضمان + المراسلة + الإدارة
+    ├── ..._ekhdemli_escrow_chargily_integration.sql # تكامل Chargily مع الضمان
+    └── ..._add_stock_to_listings.sql               # عمود المخزون
 ```
 
 ---
@@ -539,6 +580,76 @@ supabase/migrations/
    https://[YOUR_SUPABASE_PROJECT_ID].supabase.co/functions/v1/chargily-webhook
    ```
 4. تأكد من تفعيل webhook لأحداث `checkout.paid`، `checkout.failed`، `checkout.canceled`
+
+---
+
+## نظام الاشتراكات (Subscriptions)
+
+### كيف يعمل الاشتراك
+
+الموقع يوفر ثلاث باقات: **مجاني**، **أساسي (1500 د.ج/شهر)**، و **احترافي (3500 د.ج/شهر)**.
+
+عندما يضغط المستخدم "اشترك الآن" في صفحة `/pricing`:
+
+1. إذا لم يكن مسجلاً → يُوجَّه لصفحة تسجيل الدخول
+2. إذا كان مسجلاً → يتم إنشاء جلسة دفع عبر Chargily Pay
+3. يُوجَّه المستخدم إلى صفحة دفع Chargily (Edahabia أو CIB)
+4. بعد نجاح الدفع، يرسل Chargily إشعاراً (webhook) إلى `chargily-webhook`
+5. الـ webhook يحدّث حالة الدفع إلى "مدفوع" ويُرقّي باقة المستخدم تلقائياً في جدول `profiles` (عمود `subscription_tier`)
+6. يُوجَّه المستخدم إلى صفحة نجاح الدفع
+
+### جدول `subscription_payments`
+
+| العمود | الوصف |
+|--------|-------|
+| `id` | معرّف فريد |
+| `user_id` | المستخدم المشترك |
+| `tier` | الباقة (`basic` أو `pro`) |
+| `amount` | المبلغ بالدينار |
+| `status` | الحالة (`pending`, `paid`, `failed`, `canceled`) |
+| `chargily_checkout_id` | معرّف جلسة Chargily |
+| `period_start` | بداية فترة الاشتراك |
+| `period_end` | نهاية فترة الاشتراك (بعد 30 يوم) |
+
+### كيف تعدّل أسعار الباقات
+
+1. افتح ملف `src/lib/marketplace.ts` في محرر نصوص
+2. ابحث عن `SUBSCRIPTION_PLANS`
+3. غيّر القيم في `price`:
+   ```typescript
+   { id: 'basic', price: 1500, ... }   // غيّر 1500 لسعرك
+   { id: 'pro', price: 3500, ... }     // غيّر 3500 لسعرك
+   ```
+4. احفظ الملف وأعد البناء بـ `npm run build`
+
+> **مهم:** الأسعار في الكود هي ما يُرسل إلى Chargily. إذا غيّرت السعر في الكود فقط دون إعادة البناء والنشر، لن يتغير المبلغ المطلوب.
+
+### كيف تعدّل مدة الاشتراك
+
+مدة الاشتراك الافتراضية 30 يوماً. لتغييرها، افتح `supabase/functions/chargily-checkout/index.ts` وابحث عن:
+```typescript
+period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+```
+غيّر `30` إلى عدد الأيام التي تريدها، ثم أعد نشر الـ Edge Function.
+
+### أين تذهب أموال الاشتراك؟
+
+أموال الاشتراك تُدفع مباشرة إلى حسابك في Chargily Pay (وليس إلى حساب البائع). هذا يعني:
+- أنت (مالك المنصة) تستلم أموال الاشتراكات مباشرة
+- الاشتراك ليس مرتبطاً بنظام الضمان — هو دفع مباشر للمنصة
+- يمكنك متابعة المدفوعات من لوحة Chargily أو من جدول `subscription_payments` في Supabase
+
+### المتطلبات لعمل الاشتراك
+
+1. **مفتاح Chargily** مُعد في Supabase → Edge Functions → Secrets (`CHARGILY_SECRET_KEY`)
+2. **رابط Webhook** مُعد في لوحة Chargily:
+   ```
+   https://[YOUR_PROJECT_ID].supabase.co/functions/v1/chargily-webhook
+   ```
+3. **Edge Functions** منشورة (`chargily-checkout` و `chargily-webhook`)
+4. **جدول `subscription_payments`** مُنشأ (يُطبق تلقائياً عبر الهجرة)
+
+> الـ webhook نفسه يعالج كلا النوعين: دفع الطلبات (الضمان) ودفع الاشتراكات. لا حاجة لإعداد webhook منفصل.
 
 ---
 
@@ -600,6 +711,8 @@ supabase/migrations/
 
 ### إنشاء مجلدات التخزين
 
+> **ملاحظة:** إذا طبّقت ملف `supabase/setup_database.sql` الكامل، يتم إنشاء المجلدات تلقائياً ولا تحتاج لإنشائها يدوياً. تأكد فقط من أن السياسات مُطبقة (مضمونة في الملف الموحد).
+
 1. اذهب إلى لوحة Supabase → **Storage**
 2. اضغط **New Bucket**
 3. أنشئ مجلداً باسم `portfolio-images`:
@@ -610,6 +723,19 @@ supabase/migrations/
    - اضغط **Save**
 
 > **لماذا "Public"؟** لأن الصور يجب أن تظهر للزوار بدون تسجيل دخول. المجلد العام يسمح بقراءة الصور للجميع، لكن الرفع والتعديل يبقى محمياً بسياسات RLS — لا يمكن لأي شخص رفع ملفات إلا إذا كان مسجلاً.
+
+### خطة Supabase المجانية ($0.00) — هل تكفي؟
+
+الخطة المجانية كافية جداً لمشروعك الناشئ، فهي توفر:
+
+| المورد | الحد المجاني |
+|--------|-------------|
+| مساحة قاعدة البيانات | 500 ميجابايت (تتسع لمئات الآلاف من السجلات والنصوص) |
+| مستخدمون نشطون شهرياً (MAU) | حتى 50,000 مستخدم |
+| تخزين الملفات والصور | 1 جيجابايت |
+| نقل البيانات (Egress) | 5 جيجابايت شهرياً |
+
+> هذه الأرقام ممتازة لمرحلة البدايات والانتشار. عندما تتجاوزها، يمكنك الترقية إلى خطة Pro ($25/شهر).
 
 ### سياسات التخزين (Storage Policies)
 
@@ -660,9 +786,27 @@ supabase/migrations/
 >
 > **الجواب: لا.** تغيير `.env` فقط يجعل الموقع يتصل بقاعدة جديدة فارغة. القاعدة الجديدة لا تحتوي على أي جداول أو بيانات أو دوال — فالموقع سيظهر صفحات فارغة وأخطاء. تحتاج لإنشاء القاعدة كاملة ثم ربطها.
 
+### ما هي متغيرات البيئة (.env)؟
+
+ملف `.env` هو ملف سري وخاص يتم وضعه في مجلد المشروع المحلي، ويحتوي على بيانات حساسة لا يجب مشاركتها علناً، مثل:
+- `VITE_SUPABASE_URL` — رابط مشروع قاعدة البيانات
+- `VITE_SUPABASE_ANON_KEY` — مفتاح المصادقة العام
+
+تكمن أهمية هذه المتغيرات في أنها تمثل **"جسر الاتصال"** الذي يسمح لواجهة موقعك بالتحدث مع خوادم Supabase لجلب البيانات أو حفظها (تسجيل الدخول، عرض الخدمات، إدارة الطلبات).
+
+### Bolt مقابل امتلاك حسابك الخاص
+
+عندما تبدأ بعض المشاريع عبر أدوات مثل Bolt.new، فإنها تقوم تلقائياً بإنشاء مشروع مؤقت على Supabase نيابة عنك لتسريع عملية التشغيل الفوري.
+
+ولكن لضمان السيطرة الكاملة، وتجنب ضياع البيانات، وامتلاك لوحة التحكم بالكامل، يجب:
+1. إنشاء حساب مجاني شخصي على [supabase.com](https://supabase.com)
+2. إنشاء مشروع جديد خاص بك
+3. نقل الجداول (عبر الـ Migrations أو الـ SQL)
+4. استبدال المفاتيح القديمة بالمفاتيح الجديدة في ملف `.env`
+
 ### لماذا تحتاج Supabase خاص بك؟
 
-المشروع الحالي مربوط بـ Supabase جاهز (أُنشئ أثناء التطوير). أنت لا تملك الوصول لحسابه. إذا أردت تحكماً كاملاً — رؤية البيانات، تعديل الجداول، إدارة المستخدمين — يجب أن تنشئ Supabase خاص بك وتربط المشروع به.
+المشروع قد يبدأ مربوطاً بـ Supabase جاهز (أُنشئ أثناء التطوير). إذا أردت تحكماً كاملاً — رؤية البيانات، تعديل الجداول، إدارة المستخدمين — يجب أن تنشئ Supabase خاص بك وتربط المشروع به.
 
 ### الخطوة 1: إنشاء حساب و مشروع على Supabase
 
@@ -695,20 +839,25 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
 
 ### الخطوة 4: تطبيق هجرات قاعدة البيانات (مهم جداً)
 
-القاعدة الجديدة فارغة تماماً. يجب إنشاء كل الجداول والعلاقات والدوال. الهجرات موجودة في المشروع في مجلد `supabase/migrations/` — لكنها لا تُطبق تلقائياً بمجرد نسخ الملفات.
+القاعدة الجديدة فارغة تماماً. يجب إنشاء كل الجداول والعلاقات والدوال.
 
-**كيف تُطبق الهجرات؟**
+**الطريقة الأسهل — ملف واحد بضغطة زر (مُوصى بها):**
 
-هذا الجزء يحتاج تطبيقها على Supabase. هناك طريقتان:
+أنشأنا لك ملفاً موحداً يحتوي على كل الهجرات بالترتيب الصحيح في ملف واحد:
 
-#### الطريقة الأولى: عبر Supabase SQL Editor (يدوياً)
+1. افتح ملف `supabase/setup_database.sql` على حاسوبك بمحرر نصوص (Notepad أو VS Code)
+2. انسخ محتواه بالكامل (`Ctrl+A` ثم `Ctrl+C`)
+3. في لوحة Supabase، اذهب إلى **SQL Editor** ← **New query**
+4. الصق المحتوى في المحرر (`Ctrl+V`)
+5. اضغط **Run** (أو `Ctrl+Enter`)
+6. انتظر حتى تظهر رسالة `Success. No rows returned.`
+7. مبروك! قاعدة البيانات جاهزة — كل الجداول والسياسات والدوال منشأة
 
-1. في لوحة Supabase، اذهب إلى **SQL Editor**
-2. اضغط **New query**
-3. افتح كل ملف في مجلد `supabase/migrations/` بمحرر نصوص على حاسوبك
-4. انسخ محتواه بالكامل والصقه في SQL Editor
-5. اضغط **Run**
-6. كرّر ذلك مع كل ملف **بالترتيب** (من الأقدم للأحدث حسب التاريخ في اسم الملف):
+> هذا الملف آمن للتشغيل أكثر من مرة — يستخدم `IF NOT EXISTS` و `DROP IF EXISTS` فلا يحذف أي بيانات موجودة. كما ينشئ مجلدات التخزين (Storage Buckets) تلقائياً فلا تحتاج لإنشائها يدوياً.
+
+**الطريقة البديلة — تطبيق الهجرات واحدة تلو الأخرى:**
+
+إذا فضّلت تطبيق كل هجرة على حدة، افتح كل ملف في مجلد `supabase/migrations/` بمحرر نصوص على حاسوبك وانسخ محتواه والصقه في SQL Editor واضغط Run. كرّر ذلك مع كل ملف **بالترتيب** (من الأقدم للأحدث حسب التاريخ في اسم الملف):
 
 ```
 supabase/migrations/
@@ -722,12 +871,13 @@ supabase/migrations/
 ├── 20261016225003_ekhdemli_marketplace_schema.sql
 ├── 20261016231447_ekhdemli_escrow_messaging_admin.sql
 ├── 20261016234510_ekhdemli_escrow_chargily_integration.sql
-└── 20261017003412_add_stock_to_listings.sql               ← انتهِ بهذا
+├── 20261017003412_add_stock_to_listings.sql
+└── 20261017033022_create_subscription_payments.sql.sql    ← انتهِ بهذا
 ```
 
-> **تنبيه:** الترتيب مهم! كل هجرة تعتمد على التي قبلها. إذا طبقتها بترتيب خاطئ ستحصل على أخطاء.
+> **تنبيه:** الترتيب مهم! كل هجرة تعتمد على التي قبلها. إذا طبقتها بترتيب خاطئ ستحصل على أخطاء. الطريقة الأسهل (الملف الموحد) تضمن الترتيب الصحيح تلقائياً.
 
-#### الطريقة الثانية: عبر Supabase MCP (تلقائياً)
+#### عبر Supabase MCP (تلقائياً)
 
 إذا كنت تستخدم بيئة تطوير تدعم Supabase MCP (مثل Bolt)، تُطبق الهجرات تلقائياً عند إضافتها — لا حاجة لنسخها يدوياً.
 
@@ -788,7 +938,7 @@ https://[YOUR_PROJECT_ID].supabase.co/functions/v1/chargily-webhook
 | 1 | أنشئ مشروع Supabase جديد | [supabase.com](https://supabase.com) |
 | 2 | انسخ URL و Anon Key | Supabase Dashboard → Project Settings → API |
 | 3 | استبدل القيم في `.env` | حاسوبك |
-| 4 | طبّق كل الهجرات بالترتيب | Supabase SQL Editor |
+| 4 | طبّق كل الهجرات (ملف واحد بضغطة زر) | Supabase SQL Editor — الصق محتوى `supabase/setup_database.sql` واضغط Run |
 | 5 | عطّل "Confirm email" | Supabase → Authentication |
 | 6 | أنشئ مجلدات التخزين | Supabase → Storage |
 | 7 | انشر دوال الدفع + المفاتيح | Supabase → Edge Functions |
@@ -854,10 +1004,11 @@ https://[YOUR_PROJECT_ID].supabase.co/functions/v1/chargily-webhook
 | **اسم الموقع "Ekhdemli"** | `src/components/marketplace-layout.tsx` | `src` ← `components` ← `marketplace-layout.tsx` | ابحث عن كلمة "Ekhdemli" وغيّرها لاسمك |
 | **التصنيفات (إضافة/حذف)** | `src/lib/marketplace.ts` | `src` ← `lib` ← `marketplace.ts` | ستجد قائمة بأسماء التصنيفات — أضف أو احذف |
 | **نص الصفحة الرئيسية** | `src/pages/home.tsx` | `src` ← `pages` ← `home.tsx` | العناوين والأوصاف — عدّل النصوص العربية |
-| **أسعار الاشتراكات** | `src/pages/pricing.tsx` | `src` ← `pages` ← `pricing.tsx` | الأسعار والمميزات |
+| **أسعار الاشتراكات** | `src/lib/marketplace.ts` | `src` ← `lib` ← `marketplace.ts` | ابحث عن `SUBSCRIPTION_PLANS` وغيّر قيم `price` — انظر قسم [نظام الاشتراكات](#نظام-الاشتراكات-subscriptions) |
 | **وصف الموقع لمحركات البحث** | `index.html` | جذر المشروع | وسوم `<title>` و `<meta name="description">` |
 | **صورة الخلفية للرئيسية** | `public/hero-bg.webp` | `public` ← `hero-bg.webp` | استبدل بصورتك مع الحفاظ على نفس الاسم والامتداد |
 | **توجيه محركات البحث** | `public/robots.txt` | `public` ← `robots.txt` | عدّل القيم حسب حاجتك |
+| **توجيه المسارات لـ Netlify** | `public/_redirects` | `public` ← `_redirects` | جاهز مسبقاً — لا تلمسه. يضمن عمل كل المسارات بدون خطأ 404 |
 | **رسوم عمولة المنصة** | `supabase/functions/chargily-checkout/index.ts` | `supabase` ← `functions` ← `chargily-checkout` ← `index.ts` | ابحث عن نسبة العمولة وغيّرها |
 | **مدة التسليم القصوى** | `src/pages/publish-service.tsx` | `src` ← `pages` ← `publish-service.tsx` | الحد الأقصى لعدد الأيام |
 
@@ -906,9 +1057,10 @@ project/
 │   │   └── ui/             ← مكونات جاهزة (لا تلمسها)
 │   ├── lib/                ← منطق التطبيق + الاتصال بقاعدة البيانات
 │   └── contexts/           ← حالة المستخدم (تسجيل الدخول/الخروج)
-├── public/                 ← ملفات ثابتة (صور، robots.txt)
+├── public/                 ← ملفات ثابتة (صور، robots.txt، _redirects لـ Netlify)
 ├── supabase/               ← كل ما يخص الخلفية (قاعدة البيانات + الدوال)
-│   ├── migrations/         ← أوامر إنشاء الجداول (لا تلمسها)
+│   ├── setup_database.sql  ← ★ ملف موحد: انسخه والصقه في SQL Editor لإنشاء كل الجداول
+│   ├── migrations/         ← أوامر إنشاء الجداول (منفصلة — لا تلمسها)
 │   └── functions/          ← دوال الدفع (تحتاج تعديل المفتاح فقط)
 ├── .env                    ← ★ ملف البيانات (الأهم — عدّله أول شيء)
 ├── index.html              ← صفحة الموقع الأولى + وسوم SEO
@@ -960,9 +1112,26 @@ Edge Function `chargily-webhook` تتحقق من توقيع HMAC-SHA256 لكل �
 **السبب:** إعادة توجيه المسارات غير مُعدة للـ SPA.
 
 **الحل:** تأكد من وجود قاعدة إعادة كتابة لترسل كل الطلبات إلى `index.html`:
+- **Netlify:** ملف `public/_redirects` موجود في المشروع بمحتوى `/* /index.html 200` — لا تحتاج لإضافته
 - **Nginx:** `try_files $uri $uri/ /index.html;`
-- **Netlify:** ملف `public/_redirects` بمحتوى `/* /index.html 200`
 - **Vercel:** تتم تلقائياً
+
+### المشكلة: خطأ 404 عند تحديث صفحة على Netlify
+
+**السبب:** ملف `_redirects` غير موجود أو لم يُرفع مع الموقع.
+
+**الحل:** تأكد أن ملف `public/_redirects` موجود في المشروع ويحتوي على `/* /index.html 200`. عند البناء بـ `npm run build`، سيُنسخ تلقائياً إلى مجلد `dist/`.
+
+### المشكلة: الموقع يعمل لكن لا تظهر بيانات (صفحات فارغة)
+
+**السبب:** متغيرات Supabase غير مضافة في Netlify، أو قاعدة البيانات فارغة (لم تُطبّق الهجرات).
+
+**الحل:**
+1. في لوحة Netlify ← **Site settings** ← **Environment variables**، أضف:
+   - `VITE_SUPABASE_URL` = رابط مشروع Supabase
+   - `VITE_SUPABASE_ANON_KEY` = المفتاح العام
+2. أعد النشر (Redeploy)
+3. تأكد أنك طبّقت ملف `supabase/setup_database.sql` في Supabase SQL Editor
 
 ### المشكلة: "Invalid signature" في Webhook
 
